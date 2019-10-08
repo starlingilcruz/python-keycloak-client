@@ -16,6 +16,7 @@ class KeycloakClient(object):
     _server_url = None
     _session = None
     _headers = None
+    _last_response = None
 
     def __init__(self, server_url, headers=None, logger=None):
         """
@@ -55,6 +56,10 @@ class KeycloakClient(object):
             self._session.headers.update(self._headers)
         return self._session
 
+    @property
+    def last_response(self):
+        return self._last_response
+
     def get_full_url(self, path, server_url=None):
         return urljoin(server_url or self._server_url, path)
 
@@ -79,6 +84,7 @@ class KeycloakClient(object):
         return self.session.delete(url, headers=headers, **kwargs)
 
     def _handle_response(self, response):
+        self._last_response = response
         with response:
             try:
                 response.raise_for_status()
