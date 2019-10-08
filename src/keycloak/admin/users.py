@@ -79,6 +79,7 @@ class User(KeycloakAdminBase):
     _paths = {
         'single': _BASE,
         'reset_password': _BASE + "/reset-password"
+        'impersonation': _BASE + "/impersonation"
     }
 
     def __init__(self, realm_name, user_id, *args, **kwargs):
@@ -184,3 +185,17 @@ class User(KeycloakAdminBase):
             data=json.dumps(payload, sort_keys=True)
         )
         return result
+
+    def impersonate(self):
+        """
+        Impersonate user with the given id
+        """
+        return self._client.post(
+            url=self._client.get_full_url(
+                self.get_path(
+                    'impersonation',
+                    realm=self._realm_name,
+                    user_id=self._user_id
+                )
+            )
+        )
