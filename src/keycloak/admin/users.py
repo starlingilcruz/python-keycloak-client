@@ -78,7 +78,7 @@ class User(KeycloakAdminBase):
     _BASE = "/auth/admin/realms/{realm}/users/{user_id}"
     _paths = {
         'single': _BASE,
-        'reset_password': _BASE + "/reset-password"
+        'reset_password': _BASE + "/reset-password",
         'impersonation': _BASE + "/impersonation"
     }
 
@@ -197,5 +197,6 @@ class User(KeycloakAdminBase):
                     realm=self._realm_name,
                     user_id=self._user_id
                 )
-            )
+            ),
+            data={}
         )

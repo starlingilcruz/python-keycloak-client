@@ -158,7 +158,7 @@ class KeycloakAuthz(WellKnownMixin, object):
 
         res = []
         for permission in permissions.get('permissions', []):
-            for scope in permission.get('scopes', []):
+            for scope in permission.get('scopes', ['']):
                 ptuple = (permission.get('rsname'), scope)
                 if ptuple in resource_scopes_tuples:
                     res.append(ptuple)
