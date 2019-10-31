@@ -73,6 +73,17 @@ class Users(KeycloakAdminBase):
         return User(realm_name=self._realm_name,
                     user_id=user_id, client=self._client)
 
+    def by_username(self, username):
+        users = self._client.get(
+            url=self._client.get_full_url(
+                self.get_path('collection', realm=self._realm_name)
+            ),
+            username=username
+        )
+        if users:
+            return users[0]
+        return None
+
 
 class User(KeycloakAdminBase):
     _BASE = "/auth/admin/realms/{realm}/users/{user_id}"

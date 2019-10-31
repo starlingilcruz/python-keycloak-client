@@ -109,6 +109,13 @@ class Groups(KeycloakAdminBase):
         )
 
     def move_to_root(self, group_id, name):
+        """
+        Move group to root
+        https://stackoverflow.com/a/56742736/2414448
+        :param group_id:
+        :param name:
+        :return:
+        """
         return self._client.post(
             url=self._client.get_full_url(
                 self.get_path(
@@ -170,3 +177,11 @@ class Group(KeycloakAdminBase):
             data=json.dumps({'name': name})
         )
 
+    def add_member(self, user_id):
+        from keycloak.admin.users import Users
+        user = Users(
+            realm_name=self._realm_name,
+            client=self._client
+        ).by_id(user_id=user_id)
+        user.groups.add(group_id=self._group_id)
+        return user
