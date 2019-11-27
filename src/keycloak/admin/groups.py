@@ -1,6 +1,6 @@
 import json
 from collections import OrderedDict
-
+from keycloak.utils import to_camel_case
 from keycloak.admin import KeycloakAdminBase
 
 __all__ = ('Groups',)
@@ -56,7 +56,6 @@ class Groups(KeycloakAdminBase):
         """
         payload = OrderedDict(name=name)
         for key in GROUPS_KWARGS:
-            from keycloak.admin.clientroles import to_camel_case
             if key in kwargs:
                 payload[to_camel_case(key)] = kwargs[key]
 

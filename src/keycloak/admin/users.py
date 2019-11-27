@@ -1,6 +1,6 @@
 import json
 from collections import OrderedDict
-
+from keycloak.utils import to_camel_case
 from keycloak.admin import KeycloakAdminBase
 
 __all__ = ('Users', 'User',)
@@ -46,7 +46,6 @@ class Users(KeycloakAdminBase):
         payload = OrderedDict(username=username)
 
         for key in USER_KWARGS:
-            from keycloak.admin.clientroles import to_camel_case
             if key in kwargs:
                 payload[to_camel_case(key)] = kwargs[key]
 
@@ -143,7 +142,6 @@ class User(KeycloakAdminBase):
         for k, v in self.user.items():
             payload[k] = v
         for key in USER_KWARGS:
-            from keycloak.admin.clientroles import to_camel_case
             if key in kwargs:
                 payload[to_camel_case(key)] = kwargs[key]
         result = self._client.put(

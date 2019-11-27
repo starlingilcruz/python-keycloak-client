@@ -1,6 +1,50 @@
+import json
 from keycloak.admin import KeycloakAdminBase
+from keycloak.utils import to_camel_case 
+from collections import OrderedDict
 
 __all__ = ('Client', 'Clients',)
+
+# https://www.keycloak.org/docs-api/8.0/rest-api/index.html#_clientrepresentation
+CLIENTS_KWARGS = [
+    'access',
+    'adminUrl',
+    'attributes',
+    'authenticationFlowBindingOverrides',
+    'authorizationServicesEnabled',
+    'authorizationSettings',
+    'baseUrl',
+    'bearerOnly',
+    'clientAuthenticatorType',
+    'clientId',
+    'consentRequired',
+    'defaultClientScopes',
+    'defaultRoles',
+    'description',
+    'directAccessGrantsEnabled',
+    'enabled',
+    'frontchannelLogout',
+    'fullScopeAllowed',
+    'id',
+    'implicitFlowEnabled',
+    'name',
+    'nodeReRegistrationTimeout',
+    'notBefore',
+    'optionalClientScopes',
+    'origin',
+    'protocol',
+    'protocolMappers',
+    'publicClient',
+    'redirectUris',
+    'registeredNodes',
+    'registrationAccessToken',
+    'rootUrl',
+    'secret',
+    'serviceAccountsEnabled',
+    'standardFlowEnabled',
+    'surrogateAuthRequired',
+    'webOrigins',
+]
 
 
 class Clients(KeycloakAdminBase):
@@ -22,6 +66,21 @@ class Clients(KeycloakAdminBase):
 
     def by_id(self, id):
         return Client(client=self._client, realm_name=self._realm_name, id=id)
+
+    def create(self, **kwargs):
+        payload = OrderedDict()
+        for key in CLIENTS_KWARGS:
+            if key in kwargs:
+                payload[to_camel_case(key)] = kwargs[key]
+
+
+        return self._client.post(
+            url=self._client.get_full_url(
+                self.get_path('collection', realm=self._realm_name)
+            ),
+            data=json.dumps(payload)
+        )
+
 
 
 class Client(KeycloakAdminBase):
