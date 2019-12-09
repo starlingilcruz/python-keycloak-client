@@ -70,7 +70,7 @@ class KeycloakAdmin(object):
 
     def get(self, url, headers=None, **kwargs):
         return self._realm.client.get(
-            url=url, headers=self._add_auth_header(headers=headers)
+            url=url, headers=self._add_auth_header(headers=headers), **kwargs
         )
 
     def delete(self, url, headers=None, **kwargs):
