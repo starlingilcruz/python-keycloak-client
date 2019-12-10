@@ -2,6 +2,7 @@ import json
 from keycloak.admin import KeycloakAdminBase
 from keycloak.utils import to_camel_case 
 from collections import OrderedDict
+from .clientroles import ClientRoles
 
 __all__ = ('Client', 'Clients',)
 
@@ -69,9 +70,10 @@ class Clients(KeycloakAdminBase):
 
     def create(self, **kwargs):
         payload = OrderedDict()
-        for key in CLIENTS_KWARGS:
-            if key in kwargs:
-                payload[to_camel_case(key)] = kwargs[key]
+        for key in kwargs:
+            _key = to_camel_case(key)
+            if _key in CLIENTS_KWARGS:
+                payload[_key] = kwargs[key]
 
 
         return self._client.post(
@@ -86,6 +88,9 @@ class Clients(KeycloakAdminBase):
 class Client(KeycloakAdminBase):
     _id = None
     _realm_name = None
+    _paths = {
+        'single': '/auth/admin/realms/{realm}/clients/{id}'
+    }
 
     def __init__(self, realm_name, id, *args, **kwargs):
         self._id = id
@@ -94,6 +99,32 @@ class Client(KeycloakAdminBase):
 
     @property
     def roles(self):
-        from keycloak.admin.clientroles import ClientRoles
         return ClientRoles(client=self._client, client_id=self._id,
                            realm_name=self._realm_name)
+
+    def update(self, **kwargs):
+        payload = OrderedDict()
+        for key in kwargs:
+            _key = to_camel_case(key)
+            if _key in CLIENTS_KWARGS:
+                payload[_key] = kwargs[key]
+
+
+        return self._client.put(
+            url=self._client.get_full_url(
+                self.get_path('single', realm=self._realm_name, id=self._id)
+            ),
+            data=json.dumps(payload)
+        )
+
+    def delete(self):
+
+        return self._client.delete(
+            url=self._client.get_full_url(
+                self.get_path('single', realm=self._realm_name, id=self._id)
+            )
+        )
+
+
+
+
