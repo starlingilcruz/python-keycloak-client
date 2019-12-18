@@ -68,7 +68,7 @@ class Clients(KeycloakAdminBase):
     def by_id(self, id):
         return Client(client=self._client, realm_name=self._realm_name, id=id)
 
-    def create(self, **kwargs):
+    def create(self, *args, **kwargs):
         payload = OrderedDict()
         for key in kwargs:
             _key = to_camel_case(key)
@@ -102,7 +102,7 @@ class Client(KeycloakAdminBase):
         return ClientRoles(client=self._client, client_id=self._id,
                            realm_name=self._realm_name)
 
-    def update(self, **kwargs):
+    def update(self, *args, **kwargs):
         payload = OrderedDict()
         for key in kwargs:
             _key = to_camel_case(key)
