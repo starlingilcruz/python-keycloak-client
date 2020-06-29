@@ -3,7 +3,7 @@ from collections import OrderedDict
 from keycloak.utils import to_camel_case
 from keycloak.admin import KeycloakAdminBase
 
-__all__ = ('Groups',)
+__all__ = ('Groups', )
 
 # https://www.keycloak.org/docs-api/7.0/rest-api/index.html#_grouprepresentation
 GROUPS_KWARGS = [
@@ -61,10 +61,7 @@ class Groups(KeycloakAdminBase):
 
         return self._client.post(
             url=self._client.get_full_url(
-                self.get_path(
-                    'collection',
-                    realm=self._realm_name
-                )
+                self.get_path('collection', realm=self._realm_name)
             ),
             data=json.dumps(payload)
         )
@@ -78,16 +75,17 @@ class Groups(KeycloakAdminBase):
         """
         return self._client.get(
             url=self._client.get_full_url(
-                self.get_path('by_path',
-                              realm=self._realm_name,
-                              group_path=path)
+                self.
+                get_path('by_path', realm=self._realm_name, group_path=path)
             )
         )
 
     def by_id(self, group_id):
-        return Group(realm_name=self._realm_name,
-                     group_id=group_id,
-                     client=self._client)
+        return Group(
+            realm_name=self._realm_name,
+            group_id=group_id,
+            client=self._client
+        )
 
     def move(self, from_id, to_id):
         """
@@ -99,12 +97,12 @@ class Groups(KeycloakAdminBase):
         return self._client.post(
             url=self._client.get_full_url(
                 self.get_path(
-                    'children',
-                    realm=self._realm_name,
-                    group_id=to_id
+                    'children', realm=self._realm_name, group_id=to_id
                 )
             ),
-            data=json.dumps({'id': from_id})
+            data=json.dumps({
+                'id': from_id
+            })
         )
 
     def move_to_root(self, group_id, name):
@@ -117,12 +115,12 @@ class Groups(KeycloakAdminBase):
         """
         return self._client.post(
             url=self._client.get_full_url(
-                self.get_path(
-                    'collection',
-                    realm=self._realm_name
-                )
+                self.get_path('collection', realm=self._realm_name)
             ),
-            data=json.dumps({'id': group_id, 'name': name})
+            data=json.dumps({
+                'id': group_id,
+                'name': name
+            })
         )
 
 
@@ -155,9 +153,7 @@ class Group(KeycloakAdminBase):
         self._group = self._client.get(
             url=self._client.get_full_url(
                 self.get_path(
-                    'single',
-                    realm=self._realm_name,
-                    group_id=self._group_id
+                    'single', realm=self._realm_name, group_id=self._group_id
                 )
             )
         )
@@ -173,14 +169,23 @@ class Group(KeycloakAdminBase):
                     group_id=self._group_id
                 )
             ),
-            data=json.dumps({'name': name})
+            data=json.dumps({
+                'name': name
+            })
         )
 
     def add_member(self, user_id):
         from keycloak.admin.users import Users
         user = Users(
-            realm_name=self._realm_name,
-            client=self._client
+            realm_name=self._realm_name, client=self._client
         ).by_id(user_id=user_id)
         user.groups.add(group_id=self._group_id)
+        return user
+
+    def delete_member(self, user_id):
+        from keycloak.admin.users import Users
+        user = Users(
+            realm_name=self._realm_name, client=self._client
+        ).by_id(user_id=user_id)
+        user.groups.delete(group_id=self._group_id)
         return user
